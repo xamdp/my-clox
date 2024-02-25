@@ -1,2 +1,3 @@
-# my-clox
-c project
+## my-clox
+
+A way for me to practice C.
