@@ -25,8 +25,18 @@ void writeChunk(Chunk *chunk, uint8_t byte, int line) {	/* writeChunk() can writ
 		chunk->lines = GROW_ARRAY(int, chunk->lines, oldCapacity, chunk->capacity); /* we do the same for the line info too */
 	}
 
+	if (line != chunk->lines[chunk->count - 1]) {
+		// Write the new line number
+		chunk->lines[chunk->count] = line;
+		chunk->count++;
+	} else {
+		// Increment the count of consecutive instructions on the current line
+		chunk->lines[chunk->count - 1]++;
+	}
+
+	// Write the byte
 	chunk->code[chunk->count] = byte;
-	chunk->lines[chunk->count] = line;	/* we store the line number in the array */
+	// chunk->lines[chunk->count] = line;	/* we store the line number in the array */
 	chunk->count++;
 }
 
