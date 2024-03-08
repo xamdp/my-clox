@@ -17,6 +17,9 @@
 (type*)reallocate(pointer, sizeof(type) * (oldCount), \
 				  sizeof(type) * (newCount))
 
+#define FREE_ARRAY(type, pointer, oldCount) \
+reallocate(pointer, sizeof(type) * (oldCount), 0)
+
 /* This reallocate() is the single function we'll use for all dynamic memory management in clox --allocating memory, freeing it, and changing the size of
  * an existing allocation. Routing all of those operations through a single 
  * function will be important later when we add a garbage collector that needs to keep track of how much memory is in use. */ 

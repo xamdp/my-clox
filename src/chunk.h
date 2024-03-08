@@ -7,11 +7,13 @@
 #define clox_chunk_h
 
 #include "common.h"
+#include "value.h"
 
 /* Each instruction has a one-byte operation code (universally shortened 
  * to opcode). That number controls what kind of instruction we're dealing 
  * with --add, subtract, look up variable, etc. Those are defined here: */
 typedef enum {
+	OP_CONSTANT, /* produces a a particular constant */
 	OP_RETURN,	/* return from the current function */
 } OpCode;
 
@@ -29,12 +31,18 @@ typedef enum {
 typedef struct {
 	int capacity;	/* the number of elements in the array we have allocated */
 	int count;	/* how many of those allocated entries are actually in use */
-	uint8_t* code;
+	uint8_t *code;
+	int *lines;
+	ValueArray constants;
 } Chunk;
 
 /* Initializes a new chunk */
-void initChunk(Chunk* chunk);
+void initChunk(Chunk *chunk);
+/* Frees a chunk */
+void freeChunk(Chunk *chunk);
 /* Appends a byte to the end of the chunk */
-void writeChunk(Chunk* chunk, uint8_t byte);
+void writeChunk(Chunk *chunk, uint8_t byte, int line);
+/* add constant to the array */
+int addConstant(Chunk *chunk, Value value);
 
 #endif
