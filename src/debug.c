@@ -24,12 +24,23 @@ static int simpleInstruction(const char *name, int offset) {
 	return offset + 1;
 }
 
+static int getLine(Chunk *chunk, int instructionIndex) {
+	int line = -1;
+	for (int i = 0; i < instructionIndex; i++) {
+		if (chunk->lines[i] != -1) {
+			line = chunk->lines[i];
+		}
+	}
+	return line;
+}
+
 int disassembleInstruction(Chunk *chunk, int offset) {
 	printf("%04d ", offset);	/* It's helpful to show which source line each instruction was compiled from. */
 	if (offset > 0 && chunk->lines[offset] == chunk->lines[offset - 1]) {	/* That gives us a way to map back to the original code */
 		printf("   | ");	/* when we're trying to figure out what some blob of bytecode is supposed to do.*/
 	} else { 
-		printf("%4d ", chunk->lines[offset]);
+		printf("%4d ", getLine(chunk, offset));
+		// printf("%4d ", chunk->lines[offset]);
 	}
 
 	uint8_t instruction = chunk->code[offset];
@@ -43,3 +54,5 @@ int disassembleInstruction(Chunk *chunk, int offset) {
 			return offset + 1;
 	}
 }
+
+
