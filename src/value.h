@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-typedef double Value;
+typedef double Value;	/* an alias for double data type */
 
 typedef struct {
 	int capacity;

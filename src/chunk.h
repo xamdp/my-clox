@@ -14,6 +14,11 @@
  * with --add, subtract, look up variable, etc. Those are defined here: */
 typedef enum {
 	OP_CONSTANT, /* produces a a particular constant */
+	OP_ADD,
+	OP_SUBTRACT,
+	OP_MULTIPLY,
+	OP_DIVIDE,
+	OP_NEGATE,	/* */
 	OP_RETURN,	/* return from the current function */
 } OpCode;
 
