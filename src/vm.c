@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "common.h"
+#include "compiler.h"
 #include "debug.h"
 #include "vm.h"
 
@@ -71,15 +72,14 @@ and looks up the corresponding Value in the chunk's constant table. */
 				printf("\n");
 				return INTERPRET_OK;
 			}
-		a}
+		}
 	}
 #undef READ_BYTE
 #undef READ_CONSTANT
 #undef BINARY_OP
 }
 
-InterpretResult interpret(Chunk *chunk) {
-	vm.chunk = chunk;
-	vm.ip = vm.chunk->code;
-	return run();
+InterpretResult interpret(const char *source) {
+	compile(source);
+	return INTERPRET_OK;
 }

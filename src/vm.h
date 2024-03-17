@@ -22,8 +22,8 @@ typedef enum {
 
 void initVM();
 void freeVM();
-/* Accepts a pointer to struct Chunk */
-InterpretResult interpret(Chunk *chunk); /* responsible for interpreting the code contained in the Chunk struct */
+/* Accepts a pointer that contains the source code */
+InterpretResult interpret(const char *source); /* responsible for interpreting the code contained in the Chunk struct */
 
 /* The stack protocol supports two operations */
 
