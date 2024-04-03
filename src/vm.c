@@ -80,6 +80,22 @@ and looks up the corresponding Value in the chunk's constant table. */
 }
 
 InterpretResult interpret(const char *source) {
-	compile(source);
-	return INTERPRET_OK;
+	Chunk chunk;
+	initChunk(&chunk); /* create a new empty chunk and pass it over to the compiler.
+	The compiler will take the user's program and fill up the chunk with bytcode. */
+
+	if (!compile(source, &chunk)) {	/* If it does encounter an error, compile() returns false, and we discard the unusable chunk. */
+		freeChunk(&chunk);
+		return INTERPRET_COMPILE_ERROR;
+	}
+
+	vm.chunk = &chunk;	/* Otherwise, we send the completed chunk over to the VM to be executed. */
+	vm.ip = vm.chunk->code;
+
+	InterpretResult result = run();
+
+	freeChunk(&chunk);	/* When the VM finishes, we free the chunk and we're done. */
+	return result;
+	// compile(source);
+	// return INTERPRET_OK;
 }
