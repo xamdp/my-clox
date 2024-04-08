@@ -59,6 +59,7 @@ static void runFile(const char *path) {
 
 /* From this tiny seed, I will grow my entire VM */
 int main(int argc, const char* argv[]) {
+	printf("Hello\n");
 	initVM();
 
 	if (argc == 1) {

@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdio.h>
 #include "common.h"
 #include "compiler.h"
@@ -10,6 +11,19 @@ VM vm;
  * the stack is empty. */
 static void resetStack() {
 	vm.stackTop = vm.stack;
+}
+
+static void runtimeError(const char* format, ...) {
+	va_list args; /* this let us pass an arbitrary number of arguments to runtimeError(). */
+	va_start(args, format);
+	vfprintf(stderr, format, args); /* flavor of printf() that takes an explicit va_list */
+	va_end(args);
+	fputs("\n", stderr);
+
+	size_t instruction = vm.ip - vm.chunk->code - 1;
+	int line = vm.chunk->lines[instruction];
+	fprintf(stderr, "[line %d] in script\n", line);
+	resetStack();
 }
 
 void initVM() {
@@ -31,17 +45,29 @@ Value pop() {
 
 }
 
+static Value peek(int distance) {
+	return vm.stackTop[-1 - distance];
+}
+
+static bool isFalsey(Value value) {
+	return IS_NIL(value) || (IS_BOOL(value) && !AS_BOOL(value));
+}
+
 /* The beating heart of the VM */
 static InterpretResult run() {	/* For other techniques, look up direct threaded code, jump table and computed goto */
 #define READ_BYTE() (*vm.ip++)	/* reads the byte currently pointed at by ip and then advances the instruction pointer */
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()]) /* reads the next byte from the bytecode, treats the resulting number as an index,
 and looks up the corresponding Value in the chunk's constant table. */
 /* a placeholder for the values and the binary operator */
-#define BINARY_OP(op) \
+#define BINARY_OP(ValueType, op) \
 	do { \
-		double b = pop(); \
-		double a = pop(); \
-		push(a op b); \
+		if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) { \
+			runtimeError("Operands must be numbers."); \
+			return INTERPRET_RUNTIME_ERROR; \
+	} \
+		double b = AS_NUMBER(pop()); \
+		double a = AS_NUMBER(pop()); \
+		push(ValueType(a op b)); \
 	} while (false)
 
 	for (;;) {
@@ -62,11 +88,29 @@ and looks up the corresponding Value in the chunk's constant table. */
 				push(constant);
 				break;
 			}
-			case OP_ADD:		BINARY_OP(+); break;
-			case OP_SUBTRACT:	BINARY_OP(-); break;
-			case OP_MULTIPLY:	BINARY_OP(*); break;
-			case OP_DIVIDE:		BINARY_OP(/); break;
-			case OP_NEGATE:	push(-pop()); break;
+			case OP_NIL: push(NIL_VAL); break;
+			case OP_TRUE: push(BOOL_VAL(true)); break;
+			case OP_FALSE: push(BOOL_VAL(false)); break;
+			case OP_EQUAL: {
+				Value b = pop();
+				Value a = pop();
+				push(BOOL_VAL(valuesEqual(a, b)));
+				break;
+			}
+			case OP_GREATER:	BINARY_OP(BOOL_VAL, >); break; /* we pass in BOOL_VAL since the result value type is Boolean.*/
+			case OP_LESS:		BINARY_OP(BOOL_VAL, <); break;	
+			case OP_ADD:		BINARY_OP(NUMBER_VAL, +); break;
+			case OP_SUBTRACT:	BINARY_OP(NUMBER_VAL, -); break;
+			case OP_MULTIPLY:	BINARY_OP(NUMBER_VAL, *); break;
+			case OP_DIVIDE:		BINARY_OP(NUMBER_VAL, /); break;
+			case OP_NOT: push(BOOL_VAL(isFalsey(pop()))); break;
+			case OP_NEGATE:
+				if (!IS_NUMBER(peek(0))) {
+					runtimeError("Operand must be a number.");
+					return INTERPRET_RUNTIME_ERROR;
+				}
+				push(NUMBER_VAL(-AS_NUMBER(pop())));
+				break;
 			case OP_RETURN: {
 				printValue(pop());
 				printf("\n");
@@ -74,9 +118,9 @@ and looks up the corresponding Value in the chunk's constant table. */
 			}
 		}
 	}
-#undef READ_BYTE
-#undef READ_CONSTANT
-#undef BINARY_OP
+	#undef READ_BYTE
+	#undef READ_CONSTANT
+	#undef BINARY_OP
 }
 
 InterpretResult interpret(const char *source) {
