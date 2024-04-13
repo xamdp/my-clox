@@ -12,6 +12,7 @@ typedef struct {
 	uint8_t *ip; /* a 8bit/byte pointer, instruction pointer */
 	Value stack[STACK_MAX];
 	Value *stackTop;
+	Obj* objects;	/* the vm stores a pointer to the head of the list.*/
 } VM;
 
 typedef enum {
@@ -19,6 +20,8 @@ typedef enum {
 	INTERPRET_COMPILE_ERROR,
 	INTERPRET_RUNTIME_ERROR,
 } InterpretResult;
+
+extern VM vm;
 
 void initVM();
 void freeVM();

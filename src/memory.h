@@ -3,6 +3,15 @@
 
 
 #include "common.h"
+#include "object.h"
+
+/* we allocate a new array on the heap, just big enough for the string's 
+ * characters and the trailing terminator, using this low-level macro that
+ * allocates an array with a given element type and count: */
+#define ALLOCATE(type, count) \
+	(type*)reallocate(NULL, 0, sizeof(type) * (count))
+
+#define FREE(type, pointer) reallocate(pointer, sizeof(type), 0)
 
 /* This macro calculates a new capacity based on a given current capacity.
  * It also handles when the current capacity is zero, it jumps straight to
@@ -26,8 +35,6 @@ reallocate(pointer, sizeof(type) * (oldCount), 0)
 
 /* A function for all dynamic memory management, the two size arguments passed control which operation to perform. */
 void* reallocate(void* pointer, size_t oldSize, size_t newSize);
-
-
-
+void freeObjects();
 
 #endif
