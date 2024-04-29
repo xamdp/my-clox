@@ -33,9 +33,11 @@ static void runtimeError(const char* format, ...) {
 void initVM() {
 	resetStack();
 	vm.objects = NULL;	/* When we first initialize the VM, there are no allocated objects.*/
+	initTable(&vm.strings);	/* pass the address of field strings via vm and the & operator.*/
 }
 
 void freeVM() {
+	freeTable(&vm.strings);	/* when the vm is shut down, we clean up any resources used by the table. */
 	freeObjects();
 }
 

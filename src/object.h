@@ -28,6 +28,7 @@ struct ObjString {
 	Obj obj;	/* instance of Obj struct, we use OBJ_TYPE to access the type field.*/
 	int length;
 	char* chars;
+	uint32_t hash; /* used for caching */
 };
 
 ObjString* takeString(char* chars, int length);
