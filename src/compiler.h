@@ -6,5 +6,4 @@
 
 bool compile(const char* source, Chunk* chunk);	/* We pass in the chunk where the compiler will write the code
 and then compile() returns wheter or not compilation succeeded. */
-
 #endif
