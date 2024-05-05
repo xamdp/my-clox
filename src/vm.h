@@ -13,9 +13,10 @@ typedef struct {
 	uint8_t *ip; /* a 8bit/byte pointer, instruction pointer */
 	Value stack[STACK_MAX];
 	Value *stackTop;
+	Table globals;	/* store here the global defined vars */
 	Table strings;
 	Obj* objects;	/* the vm stores a pointer to the head of the list.*/
-} VM;
+} VM;	/* basically each VM object has access to these fields */
 
 typedef enum {
 	INTERPRET_OK,
