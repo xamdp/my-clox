@@ -1,4 +1,3 @@
 Makefile
 clox
-*.o
-test.lox
+/build
