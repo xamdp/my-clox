@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "memory.h"
-#include "object.h"
-#include "table.h"
-#include "value.h"
-#include "vm.h"
+#include "lib/memory.h"
+#include "lib/object.h"
+#include "lib/table.h"
+#include "lib/value.h"
+#include "lib/vm.h"
 
 /* Like the previous macro, this exists mainly to avoid the need to redundantly
  * cast a void* back to the desired type.*/

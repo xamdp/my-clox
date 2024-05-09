@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "common.h"
-#include "compiler.h"
-#include "debug.h"
-#include "object.h"
-#include "memory.h"
-#include "vm.h"
+#include "lib/common.h"
+#include "lib/compiler.h"
+#include "lib/debug.h"
+#include "lib/object.h"
+#include "lib/memory.h"
+#include "lib/vm.h"
 
 VM vm;
 

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include "memory.h"
-#include "vm.h"
+#include "lib/memory.h"
+#include "lib/vm.h"
 
 void* reallocate(void *pointer, size_t oldSize, size_t newSize) {
 	if (newSize == 0) {
