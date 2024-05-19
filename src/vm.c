@@ -119,6 +119,16 @@ and looks up the corresponding Value in the chunk's constant table. */
 			case OP_TRUE: push(BOOL_VAL(true)); break;
 			case OP_FALSE: push(BOOL_VAL(false)); break;
 			case OP_POP: pop(); break;	/* as the name implies, it pops the top value off the stack and forgets it.*/
+			case OP_GET_LOCAL: {
+				uint8_t slot = READ_BYTE();
+				push(vm.stack[slot]);
+				break;
+			}
+			case OP_SET_LOCAL: {
+				uint8_t slot = READ_BYTE();
+				vm.stack[slot] = peek(0);
+				break;
+			}
 			case OP_GET_GLOBAL: {
 				ObjString* name = READ_STRING();
 				Value value;
