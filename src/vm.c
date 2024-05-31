@@ -84,6 +84,8 @@ static InterpretResult run() {	/* For other techniques, look up direct threaded 
 #define READ_BYTE() (*vm.ip++)	/* reads the byte currently pointed at by ip and then advances the instruction pointer */
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()]) /* reads the next byte from the bytecode, treats the resulting number as an index,
 and looks up the corresponding Value in the chunk's constant table. */
+#define READ_SHORT() \
+	(vm.ip += 2, (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]))
 /* a placeholder for the values and the binary operator */ 
 #define READ_STRING()	AS_STRING(READ_CONSTANT())	/* a macro inside a macro that is also inside a macro */
 #define BINARY_OP(ValueType, op) \
@@ -191,6 +193,21 @@ and looks up the corresponding Value in the chunk's constant table. */
 				printf("\n");
 				break;
 			}
+			case OP_JUMP: {
+				uint16_t offset = READ_SHORT();
+				vm.ip += offset;
+				break;
+			}
+			case OP_JUMP_IF_FALSE: {
+				uint16_t offset = READ_SHORT();
+				if (isFalsey(peek(0))) vm.ip += offset;
+				break;
+			}
+			case OP_LOOP: {
+				uint16_t offset = READ_SHORT();
+				vm.ip -= offset;
+				break;
+			}
 			case OP_RETURN: {
 				// Exit interpreter.
 				// printValue(pop());
@@ -200,6 +217,7 @@ and looks up the corresponding Value in the chunk's constant table. */
 		}
 	}
 	#undef READ_BYTE
+	#undef READ_SHORT
 	#undef READ_CONSTANT
 	#undef READ_STRING
 	#undef BINARY_OP
