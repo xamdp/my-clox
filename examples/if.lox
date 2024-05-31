@@ -1,0 +1,19 @@
+
+if (2 > 5) {
+	print "two is less than five";
+} else {
+	print "five is greater than two";
+}
+
+if (2 < 5) {
+	print "two is less than five";
+} else {
+	print "two is not greater than 5";
+}
+
+if (5 == 5) {
+	print "Five is equal to five";
+} else {
+	print "two is not greater than 5";
+}
+
